@@ -42,9 +42,29 @@ bookmarkRouter
   });
 
 bookmarkRouter
-.route('/bookmark/:id')
-.get((req, res) => {
-    res.send(bookmarks);
+ .route('/bookmark/:id')
+ .get((req, res) => {
+     const { id } = req.params;
+     const bookmark = bookmarks.find( bookmark => bookmark.id == id);
+     if(!bookmark){
+         logger.error(`Bookmark with ${id} not found.`);
+         return res.status(404).send('Bookmark not found');
+     }
+     res.json(bookmark);
+})
+.delete((req, res) => {
+    const { id } = req.params;
+    const bookmarkIndex = bookmarks.findIndex(bookmark => bookmark.id == id);
+    
+    if(bookmarkIndex === -1){
+        logger.error(`Bookmark with ${id} not found.`);
+        return res.status(404).send('Bookmark not found');
+    }
+
+    bookmarks.splice(bookmarkIndex, 1);
+
+    logger.info(`Bookmark with ${id} was deleted.`);
+    res.status(204).end();
 });
 
  module.exports = bookmarkRouter;
