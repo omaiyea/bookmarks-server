@@ -1,3 +1,2 @@
-# Bookmarks server
-
-This is just to practice Node and better server organization. 
+# Bookmarks Server
+This server collects and stores bookmarks. It was made to practice backend development.
