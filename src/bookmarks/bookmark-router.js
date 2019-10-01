@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const uuid = require('uuid/v4'); //generate uuids for new bookmark ids
 const logger = require('../logger');
@@ -5,12 +7,19 @@ const { bookmarks } = require('../store');
 
 const bookmarkRouter = express.Router(); 
 const bodyParser = express.json(); //to parse json in POST endpoint
+const BookmarksService = require('./bookmarks-service')
 
 bookmarkRouter
  .route('/bookmark')
- .get((req, res) => {
-     res.json(bookmarks)
+ .get((req, res, next) => {
+     const knexInstance = req.app.get('db')
+     BookmarksService.getAllBookmarks(knexInstance)
+      .then(bookmark => {
+          res.json(bookmark)
+      })
+      .catch(next)
   })
+  
  .post(bodyParser, (req, res) => {
     const { title, book } = req.body;
 
