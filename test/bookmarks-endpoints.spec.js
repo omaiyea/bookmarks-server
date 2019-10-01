@@ -41,4 +41,33 @@ describe.only('Bookmark Endpoints', function(){
             })
         })
     })
+
+    describe('GET /bookmark/:bookmarkId', () => {
+        context('Given there are bookmarks in the database', () => {
+            const testBookmarks = makeBookmarksArray()
+
+            beforeEach('insert bookmark', () => {
+                return db
+                 .into('bookmarks')
+                 .insert(testBookmarks)
+            })
+
+            it('GET /bookmark/:bookmarkId responds with 200 and the queried bookmark', () => {
+                const third = 3;
+                const thirdItem = testBookmarks[third - 1];
+                return supertest(app)
+                 .get(`/bookmark/${third}`)
+                 .expect(200, thirdItem)
+            })
+        })
+
+        context('Given there are no bookmarks in the database', () => {
+            it('GET /bookmark/bookmarkId responds with a 400 error', () => {
+                const thirdItemIndex = 77;
+                return supertest(app)
+                 .get(`/bookmark/${thirdItemIndex}`)
+                 .expect(404)
+            })
+        })
+    })
 })
