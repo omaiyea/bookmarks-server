@@ -4,6 +4,15 @@ const BookmarksService = {
     },
     getBookmarkById(knex, id){
         return knex.select('*').from('bookmarks').where('id', id).first() //.first to select the first item found from the object of 1
+    },
+    insertBookmark(knex, bookmark){
+        return knex
+         .insert(bookmark)
+         .into('bookmarks')
+         .returning('*') //select newly added bookarmk as array
+         .then(rows => {
+             return rows[0] //and parse bookmark from returned object
+         })
     }
 } //future: add functions to handle post/delete
 

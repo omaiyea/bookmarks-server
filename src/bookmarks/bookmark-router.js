@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const xss = require('xss');
 const uuid = require('uuid/v4'); //generate uuids for new bookmark ids
 const logger = require('../logger');
 const { bookmarks } = require('../store');
@@ -9,45 +10,51 @@ const bookmarkRouter = express.Router();
 const bodyParser = express.json(); //to parse json in POST endpoint
 const BookmarksService = require('./bookmarks-service')
 
+const serializeBookmark = bookmark => ({ 
+    id: bookmark.id,
+    title: xss(bookmark.title),
+    url: xss(bookmark.url),
+    description: xss(bookmark.description),
+    rating: xss(bookmark.rating)
+})
+
 bookmarkRouter
  .route('/bookmark')
  .get((req, res, next) => {
      const knexInstance = req.app.get('db')
      BookmarksService.getAllBookmarks(knexInstance)
       .then(bookmark => {
-          res.json(bookmark)
+          res.json(bookmark.map(serializeBookmark))
       })
       .catch(next)
   })
   
- .post(bodyParser, (req, res) => {
-    const { title, book } = req.body;
+ .post(bodyParser, (req, res, next) => {
+    const { title, url, description, rating } = req.body;
+    const knexInstance = req.app.get('db');
 
     if(!title){
         logger.error(`Title is required`);
         return res.status(404).send(`Not valid`);
     }
-    if(!book){
-        logger.error(`Book is required`);
+    if(!url){
+        logger.error(`Url is required`);
+        return res.status(404).send(`Not valid`);
+    }
+    if(!rating){
+        logger.error(`Rating is required`);
         return res.status(404).send(`Not valid`);
     }
 
-    const id = uuid();
+    const newBookmark = { title, url, description, rating}
 
-    const newBookmark = {
-        id, 
-        title,
-        book
-    };
-
-    bookmarks.push(newBookmark);
-
-    logger.info(`Bookmark with id ${id} created`);
-
-    res
-     .status(201)
-     .location(`http://localhost:8000/bookmark/${id}`)
-     .json({newBookmark});
+    BookmarksService.insertBookmark(knexInstance, newBookmark)
+     .then(bookmark => 
+        res
+         .status(201)
+         .location(`/bookmark/${bookmark.id}`)
+         .json(serializeBookmark(newBookmark)))
+     .catch(next)
   });
 
 bookmarkRouter
@@ -61,8 +68,8 @@ bookmarkRouter
                   error: { message: `Bookmark doesn't exist`}
               })
           }
-          res.json(bookmark)
-      })
+          res.json(serializeBookmark(bookmark))
+        })
       .catch(next)
 })
 .delete((req, res) => {

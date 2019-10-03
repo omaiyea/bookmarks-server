@@ -14,7 +14,7 @@ describe.only('Bookmark Endpoints', function(){
     })
     after('disconnect from db', () => db.destroy())
     before('clean the table', () => db('bookmarks').truncate())
-    this.afterEach('cleanup', () => db('bookmarks').truncate())
+    afterEach('cleanup', () => db('bookmarks').truncate())
 
     describe('GET /bookmark', () => {
         context('Given there are bookmarks in the database', () => {
@@ -68,6 +68,27 @@ describe.only('Bookmark Endpoints', function(){
                  .get(`/bookmark/${thirdItemIndex}`)
                  .expect(404)
             })
+        })
+    })
+
+    describe(`POST /bookmark`, () => {
+        it('POST /bookmark responds with 201 and the newly stored bookmark', () => {
+            const newBookmark = {
+                title: 'Bookmark 1', 
+                url: 'https://google.com', 
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non. Adipisci, pariatur. Molestiae, libero esse hic adipisci autem neque?', 
+                rating: '4.44'
+            }
+            return supertest(app)
+             .post(`/bookmark/`)
+             .send(newBookmark)
+             .expect(201)
+             .expect( res => {
+                 expect(res.body.title).to.eql(newBookmark.title)
+                 expect(res.body.url).to.eql(newBookmark.url)
+                 expect(res.body.description).to.eql(newBookmark.description)
+                 expect(res.body.rating).to.eql(newBookmark.rating)
+             })
         })
     })
 })
