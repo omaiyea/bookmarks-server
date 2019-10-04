@@ -8,3 +8,27 @@
 {"message":"Bookmark with 1 was deleted.","level":"info"}
 {"message":"Bookmark with 77 not found.","level":"error"}
 {"message":"Book is required","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Bookmark with 3) not found.","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Bookmark with 2) not found.","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Bookmark with 2 was deleted.","level":"info"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Bookmark with 2 was deleted.","level":"info"}
+{"message":"Rating is required in numeric format","level":"error"}
+{"message":"Bookmark with 2 was deleted.","level":"info"}

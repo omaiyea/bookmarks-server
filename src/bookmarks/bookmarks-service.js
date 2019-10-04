@@ -13,6 +13,11 @@ const BookmarksService = {
          .then(rows => {
              return rows[0] //and parse bookmark from returned object
          })
+    },
+    deleteBookmark(knex, bookmarkId){
+        return knex('bookmarks')
+         .where({bookmarkId})
+         .delete()
     }
 } //future: add functions to handle post/delete
 

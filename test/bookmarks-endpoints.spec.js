@@ -90,5 +90,37 @@ describe.only('Bookmark Endpoints', function(){
                  expect(res.body.rating).to.eql(newBookmark.rating)
              })
         })
+        it('POST /bookmark responds with 404 when post data is not in the right format', () => {
+            const misformatBookmark = {
+                title: 'Misformatted Bookmark',
+                url: 'https://google.com',
+                description: 'test desc',
+                rating: 'text not num'
+            }
+
+            return supertest(app)
+             .post(`/bookmark/`)
+             .send(misformatBookmark)
+             .expect(404, `Not valid`)
+        })
+    })
+
+   describe(`DELETE bookmarks endpoint`, () => {
+        const testBookmarks = makeBookmarksArray()
+
+        beforeEach('insert bookmark', () => {
+            return db
+             .into('bookmarks')
+             .insert(testBookmarks)
+        })
+
+        it('deletes a given bookmark succesfully', () => {
+            const secondId = 2;
+            const removedBookmarks = testBookmarks.filter(bookmark => bookmark.id === secondId)
+
+            return supertest(app)
+             .delete(`/bookmark/${secondId}`)
+             .expect(204)
+        })
     })
 })
