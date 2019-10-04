@@ -93,6 +93,24 @@ bookmarkRouter
 
     logger.info(`Bookmark with ${id} was deleted.`);
     res.status(204).end();
+})
+.patch(bodyParser, (req, res, next) => {
+    const { title, url, description, rating  } = req.body
+    const bookmarkToUpdate = { title, url, description, rating }
+    const knexInstance = req.app.get('db')
+
+    const numberOfValues = Object.values(bookmarkToUpdate).filter(Boolean).length // for error checking, need to update at least one value
+    if(numberOfValues === 0){
+        return res.status(400).json({
+            error: { message: `Request body must contain either 'title', 'url', 'description', or 'rating' `}
+        })
+    }
+
+    console.log(bookmarkToUpdate)
+
+    BookmarksService.updateBookmark(knexInstance, req.params.id, bookmarkToUpdate)
+     .then(numRowsAffected => {res.status(204).end()})
+     .catch(next)
 });
 
  module.exports = bookmarkRouter;

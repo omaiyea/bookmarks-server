@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const { makeBookmarksArray } = require('./bookmarks.fixtures')
 
-describe.only('Bookmark Endpoints', function(){
+describe('Bookmark Endpoints', function(){
     let db
     before('make knex instance', () => {
         db = knex({
@@ -121,6 +121,36 @@ describe.only('Bookmark Endpoints', function(){
             return supertest(app)
              .delete(`/bookmark/${secondId}`)
              .expect(204)
+        })
+    })
+
+    describe.only(`PATCH bookmarks endpoint`, () => {
+        const testBookmarks = makeBookmarksArray()
+
+        beforeEach('insert bookmark', () => {
+            return db.into('bookmarks').insert(testBookmarks)
+        })
+
+        it('updates a new bookmark succesfully', () => {
+            const idToUpdate = 2;
+            const updatedBookmark = {
+                title: 'updated title',
+                url: 'updated url', 
+                description: 'updated desc', 
+                rating: '5.55'
+            }
+            const expectedBookmark = {
+                ...testBookmarks[idToUpdate - 1],
+                ...updatedBookmark
+            }
+
+            return supertest(app)
+             .patch(`/bookmark/${idToUpdate}`)
+             .send(updatedBookmark)
+             .expect(204)
+             .then(res => supertest(app)
+              .get(`/bookmark/${idToUpdate}`)
+              .expect(expectedBookmark))
         })
     })
 })
