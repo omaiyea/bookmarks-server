@@ -102,7 +102,7 @@ bookmarkRouter
     const numberOfValues = Object.values(bookmarkToUpdate).filter(Boolean).length // for error checking, need to update at least one value
     if(numberOfValues === 0){
         return res.status(400).json({
-            error: { message: `Request body must contain either 'title', 'url', 'description', or 'rating' `}
+            error: { message: `Request body must contain either 'title', 'url', 'description', or 'rating'`}
         })
     }
 
