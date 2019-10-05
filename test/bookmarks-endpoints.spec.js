@@ -28,7 +28,7 @@ describe('Bookmark Endpoints', function(){
 
             it('GET /bookmark responds with 200 and all of the articles', () => {
                 return supertest(app)
-                 .get('/bookmark')
+                 .get('/api/bookmark')
                  .expect(200, testBookmarks)
             })
         })
@@ -36,7 +36,7 @@ describe('Bookmark Endpoints', function(){
         context('Given there are no bookmarks in the database', () => {
             it('GET /bookmark responds with 200 and an empty object', () => {
                 return supertest(app)
-                 .get('/bookmark')
+                 .get('/api/bookmark')
                  .expect(200, [])
             })
         })
@@ -56,7 +56,7 @@ describe('Bookmark Endpoints', function(){
                 const third = 3;
                 const thirdItem = testBookmarks[third - 1];
                 return supertest(app)
-                 .get(`/bookmark/${third}`)
+                 .get(`/api/bookmark/${third}`)
                  .expect(200, thirdItem)
             })
         })
@@ -65,7 +65,7 @@ describe('Bookmark Endpoints', function(){
             it('GET /bookmark/bookmarkId responds with a 400 error', () => {
                 const thirdItemIndex = 77;
                 return supertest(app)
-                 .get(`/bookmark/${thirdItemIndex}`)
+                 .get(`/api/bookmark/${thirdItemIndex}`)
                  .expect(404)
             })
         })
@@ -80,7 +80,7 @@ describe('Bookmark Endpoints', function(){
                 rating: '4.44'
             }
             return supertest(app)
-             .post(`/bookmark/`)
+             .post(`/api/bookmark/`)
              .send(newBookmark)
              .expect(201)
              .expect( res => {
@@ -99,7 +99,7 @@ describe('Bookmark Endpoints', function(){
             }
 
             return supertest(app)
-             .post(`/bookmark/`)
+             .post(`/api/bookmark/`)
              .send(misformatBookmark)
              .expect(404, `Not valid`)
         })
@@ -119,12 +119,12 @@ describe('Bookmark Endpoints', function(){
             const removedBookmarks = testBookmarks.filter(bookmark => bookmark.id === secondId)
 
             return supertest(app)
-             .delete(`/bookmark/${secondId}`)
+             .delete(`/api/bookmark/${secondId}`)
              .expect(204)
         })
     })
 
-    describe.only(`PATCH bookmarks endpoint`, () => {
+    describe(`PATCH bookmarks endpoint`, () => {
         const testBookmarks = makeBookmarksArray()
 
         beforeEach('insert bookmark', () => {
@@ -145,18 +145,18 @@ describe('Bookmark Endpoints', function(){
             }
 
             return supertest(app)
-             .patch(`/bookmark/${idToUpdate}`)
+             .patch(`/api/bookmark/${idToUpdate}`)
              .send(updatedBookmark)
              .expect(204)
              .then(res => supertest(app)
-              .get(`/bookmark/${idToUpdate}`)
+              .get(`/api/bookmark/${idToUpdate}`)
               .expect(expectedBookmark))
         })
 
         it(`responds with 400 when no required fields are supplied`, () => {
             const idToUpdate = 2
             return supertest(app)
-             .patch(`/bookmark/${idToUpdate}`)
+             .patch(`/api/bookmark/${idToUpdate}`)
              .send({irrelevantField: 'foo'})
              .expect(400, { error: { message: `Request body must contain either 'title', 'url', 'description', or 'rating'`}})
         })
@@ -172,14 +172,14 @@ describe('Bookmark Endpoints', function(){
             }
 
             return supertest(app)
-             .patch(`/bookmark/${idToUpdate}`)
+             .patch(`/api/bookmark/${idToUpdate}`)
              .send({
                  ...updatedBookmark,
                  fieldToIgnore: 'should not be in GET response'
              })
              .expect(204)
              .then(res => supertest(app)
-              .get(`/bookmark/${idToUpdate}`)
+              .get(`/api/bookmark/${idToUpdate}`)
               .expect(expectedBookmark))
         })
     })
