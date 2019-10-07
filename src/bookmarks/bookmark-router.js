@@ -4,11 +4,10 @@ const express = require('express');
 const xss = require('xss');
 const uuid = require('uuid/v4'); //generate uuids for new bookmark ids
 const logger = require('../logger');
-const { bookmarks } = require('../store');
 
 const bookmarkRouter = express.Router(); 
 const bodyParser = express.json(); //to parse json in POST endpoint
-const BookmarksService = require('./bookmarks-service')
+const BookmarkService = require('./bookmark-service')
 
 const serializeBookmark = bookmark => ({ 
     id: bookmark.id,
@@ -23,7 +22,7 @@ bookmarkRouter
  .get((req, res, next) => {
     const knexInstance = req.app.get('db')
 
-     BookmarksService.getAllBookmarks(knexInstance)
+     BookmarkService.getAllBookmarks(knexInstance)
       .then(bookmark => {
           res.json(bookmark.map(serializeBookmark))
       })
@@ -50,7 +49,7 @@ bookmarkRouter
 
     const newBookmark = { title, url, description, rating}
 
-    BookmarksService.insertBookmark(knexInstance, newBookmark)
+    BookmarkService.insertBookmark(knexInstance, newBookmark)
      .then(bookmark => 
         res
          .status(201)
@@ -64,7 +63,7 @@ bookmarkRouter
  .all((req, res, next) => {
     const knexInstance = req.app.get('db')
 
-     BookmarksService.getBookmarkById(knexInstance, req.params.id)
+     BookmarkService.getBookmarkById(knexInstance, req.params.id)
       .then(bookmark => {
           if(!bookmark){
               return res.status(404).json({
@@ -79,7 +78,7 @@ bookmarkRouter
  .get((req, res, next) => {
     const knexInstance = req.app.get('db')
 
-     BookmarksService.getBookmarkById(knexInstance, req.params.id)
+     BookmarkService.getBookmarkById(knexInstance, req.params.id)
       .then(bookmark => {
           res.json(serializeBookmark(bookmark))
         })
@@ -89,7 +88,7 @@ bookmarkRouter
     const { id } = req.params;
     const knexInstance = req.app.get('db')
 
-    BookmarksService.deleteBookmark(knexInstance, id);
+    BookmarkService.deleteBookmark(knexInstance, id);
 
     logger.info(`Bookmark with ${id} was deleted.`);
     res.status(204).end();
@@ -108,7 +107,7 @@ bookmarkRouter
 
     console.log(bookmarkToUpdate)
 
-    BookmarksService.updateBookmark(knexInstance, req.params.id, bookmarkToUpdate)
+    BookmarkService.updateBookmark(knexInstance, req.params.id, bookmarkToUpdate)
      .then(numRowsAffected => {res.status(204).end()})
      .catch(next)
 });
