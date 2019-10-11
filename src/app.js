@@ -3,17 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const cors = require('cors');
 
 const app = express();
 const { NODE_ENV } = require('./config');
 const morganOption = (NODE_ENV === 'production' ? 'tiny' : 'common');
 const bookmarkRouter = require('./bookmarks/bookmark-router');
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  next();
-});
-
+app.use(cors());
 app.use(morgan(morganOption));
 app.use(helmet());
 
